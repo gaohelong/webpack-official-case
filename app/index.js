@@ -13,7 +13,7 @@ function component () {
     /* 需要引入 lodash，下一行才能正常工作 */
     element.innerHTML = _.join(['Hello','webpack', $(window).height()], ' ');
 
-    $('body').css('background-color', 'red');
+    $('body').css({'background-color': '#000', 'color': '#fff'});
 
     return element;
 }
