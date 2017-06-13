@@ -4,9 +4,9 @@
   "description": "``` English:  https://webpack.js.org Chinease: https://doc.webpack-china.org",
   "main": "index.js",
   "scripts": {
-    "build-prod": "webpack --config config/webpack.prod.config.js",
-    "build-dev":  "webpack --config config/webpack.dev.config.js",
-    "dev-server-start": "webpack-dev-server",
+    "build-prod": "webpack --config build/webpack.prod.config.js",
+    "build-dev":  "webpack --config build/webpack.dev.config.js",
+    "dev-server-start": "webpack-dev-server --config build/webpack.dev.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
