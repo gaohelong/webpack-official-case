@@ -1,0 +1,27 @@
+{
+  "name": "webpack-office-case",
+  "version": "1.0.0",
+  "description": "``` English:  https://webpack.js.org Chinease: https://doc.webpack-china.org",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaohelong/webpack-official-case.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaohelong/webpack-official-case/issues"
+  },
+  "homepage": "https://github.com/gaohelong/webpack-official-case#readme",
+  "devDependencies": {
+    "webpack": "^2.6.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}
