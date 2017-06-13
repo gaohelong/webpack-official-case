@@ -17189,7 +17189,7 @@ function component () {
     /* 需要引入 lodash，下一行才能正常工作 */
     element.innerHTML = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.join(['Hello','webpack', __WEBPACK_IMPORTED_MODULE_1_jquery___default()(window).height()], ' ');
 
-    __WEBPACK_IMPORTED_MODULE_1_jquery___default()('body').css({'background-color': '#000', 'color': '#fff'});
+    __WEBPACK_IMPORTED_MODULE_1_jquery___default()('body').css({'background-color': '#fff', 'color': 'red'});
 
     return element;
 }
