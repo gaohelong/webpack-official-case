@@ -4,6 +4,11 @@ English:  https://webpack.js.org
 Chinease: https://doc.webpack-china.org
 ```
 
+### npm网站
+```
+https://www.npmjs.com/
+```
+
 #### 开发
 ```
 官方地址：https://doc.webpack-china.org/guides/development/#webpack-dev-server
