@@ -7,12 +7,12 @@ module.exports = {
     /* output */
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, '../dist')
     },
 
     /* webpack-dev-server */
     devServer: {
-        contentBase: path.join(__dirname, "dist"),
+        contentBase: path.join(__dirname, "../dist"),
         compress: true,
         port: 8080
     },
