@@ -1,5 +1,6 @@
-var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = { 
     /* entry */
@@ -7,7 +8,8 @@ module.exports = {
 
     /* output */
     output: {
-        filename: 'bundle.js',
+        // filename: 'bundle.js',
+        filename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, '../dist')
     },
 
@@ -23,6 +25,12 @@ module.exports = {
             compress: {
                 warnings: false
             }
+        }),
+
+        // 生成html.
+        new HtmlWebpackPlugin({
+            title: 'webpack html plugin',
+            template: './app/tpl/index.html'
         })
     ]
 };
