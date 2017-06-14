@@ -1,3 +1,7 @@
+/* sass */
+require('../../sass/main.scss');
+require('../../sass/modules/news/news.scss');
+
 import _ from 'lodash';
 
 /* externals jquery */
