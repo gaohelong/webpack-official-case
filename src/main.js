@@ -1,3 +1,6 @@
+/* sass */
+require('./sass/main.scss');
+
 import _ from 'lodash';
 
 /* externals jquery */

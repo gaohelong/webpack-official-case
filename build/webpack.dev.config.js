@@ -2,6 +2,13 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 var path = require('path');
 
+// 将css提取成单独文件.
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const extractSass = new ExtractTextPlugin({
+    filename: "[name].[contenthash].css",
+    // disable: process.env.NODE_ENV === "development" // true: 禁用，这是css在当前页面的<style></style>中. 如果为false: 启用，则单独生成css文件. 默认为false.
+});
+
 module.exports = { 
     /* entry */
     entry: {
@@ -28,13 +35,35 @@ module.exports = {
         jquery: 'jQuery'
     },
 
+    /* loader */
+    module: {
+        rules: [
+            // sass.
+            {
+                test: /\.scss$/,
+                use: extractSass.extract({
+                    use: [
+                        {loader: "css-loader"}, 
+                        // {loader: "sass-loader"}
+                        {loader: "sass-loader?includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
+                    ],
+                    // 在开发环境使用 style-loader
+                    fallback: "style-loader"
+                })
+            },
+        ]
+    },
+
     /* 插件配置 */
     plugins: [
         // source map(方便排查、定位javascript问题)
         new webpack.SourceMapDevToolPlugin({
             filename: '[name].js.map',
-            exclude: ['vendor.js']
+            exclude: ['vendor.js'] // 排除vendor.js
         }),
+
+        // 提取成单独的css文件.
+        extractSass,
 
         // 生成html.
         new HtmlWebpackPlugin({

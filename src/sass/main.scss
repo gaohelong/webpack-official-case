@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+// compass混合器.
+@import "compass/css3";
+
+$color: blue;
+body {
+    font-size:              18px;
+    color:                  $color;
+    @include                border-radius(6px);
+}
