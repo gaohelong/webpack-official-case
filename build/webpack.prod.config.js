@@ -36,7 +36,12 @@ module.exports = {
                 test: /\.scss$/,
                 use: extractSass.extract({
                     use: [
-                        {loader: "css-loader"},
+                        {
+                            loader: "css-loader",
+                            options:{
+                                minimize: true // css压缩
+                            }
+                        },
                         // {loader: "sass-loader"}
                         {loader: "sass-loader?includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
                     ],
