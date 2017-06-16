@@ -4,9 +4,9 @@
   "description": "``` English:  https://webpack.js.org Chinease: https://doc.webpack-china.org",
   "main": "index.js",
   "scripts": {
-    "build-prod": "webpack --config build/webpack.prod.config.js",
-    "build-dev": "webpack --config build/webpack.dev.config.js",
-    "dev-server-start": "webpack-dev-server --config build/webpack.dev.config.js",
+    "build-prod": "webpack --config build/webpack.prod.config.js --progress --colors",
+    "build-dev": "webpack --config build/webpack.dev.config.js --env=dev --progress --colors",
+    "dev-server-start": "webpack-dev-server --config build/webpack.dev.config.js --env=dev-server --progress --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
