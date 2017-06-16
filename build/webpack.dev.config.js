@@ -75,7 +75,8 @@ module.exports = function(env) {
                     use: [
                         /* 小于10240byte(10kb)时返回data url否则返回url, 返回data url时不会生成对应的文件. */
                         // {loader: 'svg-url-loader?limit=10240&name=assets/images/[hash].[name].[ext]'}
-                        {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[name].[ext]'}
+                        // {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[name].[ext]'}
+                        {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[ext]'}
                     ]
                 },
 
@@ -86,7 +87,8 @@ module.exports = function(env) {
                     /* 不设置publicPath时默认使用output中的publicPath */
                     // use:  "file-loader?name=[hash].[name].[ext]&publicPath=assets/images/&outputPath=assets/images/"
                     // use:  "file-loader?name=[hash].[name].[ext]&publicPath=http://hl.webpack-office-case.com/&outputPath=assets/images/"
-                    use:  "file-loader?name=[hash].[name].[ext]&outputPath=assets/images/"
+                    // use:  "file-loader?name=[hash].[name].[ext]&outputPath=assets/images/"
+                    use:  "file-loader?name=[hash].[ext]&outputPath=assets/images/"
                 },
             ]
         },

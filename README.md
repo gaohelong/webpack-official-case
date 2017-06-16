@@ -24,6 +24,93 @@ https://www.npmjs.com/
 ```javascript
 npm install --save-dev file-loader
 ```
+#### 用法
+默认情况下，生成的文件的文件名就是文件内容的 MD5 哈希值并会保留所引用资源的原始扩展名。
+
+```javascript
+var url = require("file-loader!./file.png");
+// => 输出 file.png 文件到输出目录并返回public url
+// => 即返回 "/public-path/0dcbbaa701328a3c262cfd45869e351f.png"
+```
+
+默认情况下，文件会被输出，不过如果需要的话，也可以不输出（比如使用了服务端的 packages）。
+
+```javascript
+var url = require("file-loader?emitFile=false!./file.png");
+// => 返回public url 但是不输出文件
+// => 即返回 "/public-path/0dcbbaa701328a3c262cfd45869e351f.png"
+```
+#### 文件名模板
+你可以使用查询参数 name 为你的文件配置自定义的文件名模板。例如，从你的 context 目录复制文件到输出目录，并且保留完整的目录结构，你可以使用 ?name=[path][name].[ext] 。
+
+默认情况下，会按照你指定的路径和文件名输出文件，且使用相同的 URL 路径来访问文件。
+
+你可以使用 outputPath, publicPath 和 publicPath 查询名称参数，来指定自定义的输出路径和发布目录。
+
+```javascript
+use: "file-loader?name=[name].[ext]&publicPath=assets/foo/&outputPath=app/images/"
+```
+
+useRelativePath should be true if you wish to generate relative URL to the each file context(生成相对路径)
+```javascript
+{
+    loader: 'file-loader',
+    query: {
+        useRelativePath: process.env.NODE_ENV === "production"
+    }
+}
+```
+
+#### 文件名模板占位符
+  [ext] 资源扩展名
+  [name] 资源的基本名称
+  [path] 资源相对于 context 查询参数或者配置的路径
+  [hash] 内容的哈希值，默认为十六进制编码的 md5
+  [<hashType>:hash:<digestType>:<length>] 可选配置
+    1) 其他的 hashType, 即 sha1, md5, sha256, sha512
+    2) 其他的 digestType, 即 hex, base26, base32, base36, base49, base52, base58, base62, base64
+    3) length 字符的长度
+  [N] 当前文件名按照查询参数 regExp 匹配后获得到第 N 个匹配结果
+
+#### 示例
+```javascript
+require("file-loader?name=js/[hash].script.[ext]!./javascript.js");
+// => js/0dcbbaa701328a3c262cfd45869e351f.script.js
+
+require("file-loader?name=html-[hash:6].html!./page.html");
+// => html-109fa8.html
+
+require("file-loader?name=[hash]!./flash.txt");
+// => c31e9820c001c9c4a86bce33ce43b679
+
+require("file-loader?name=[sha512:hash:base64:7].[ext]!./image.png");
+// => gdyb21L.png
+// 使用 sha512 哈希值替代 md5 并且使用 7 个字符 的 base64
+
+require("file-loader?name=img-[sha512:hash:base64:7].[ext]!./image.jpg");
+// => img-VqzT5ZC.jpg
+// 使用自定义名称，sha512 哈希值替代 md5 并且使用 base64 的 7 个字符
+
+require("file-loader?name=picture.png!./myself.png");
+// => picture.png
+
+require("file-loader?name=[path][name].[ext]?[hash]!./dir/file.png")
+// => dir/file.png?e43b20c069c4a01867c31e98cbce33c9
+```
+
+```javascript
+# 实例.
+// file-loader(将项目目录下assets/images/的目录结构及文件拷贝到输出目录下)
+{
+    test: /\.(jpe?g|png|gif)(\?v=\d+\.\d+\.\d+)?$/,
+
+    /* 不设置publicPath时默认使用output中的publicPath */
+    // use:  "file-loader?name=[hash].[name].[ext]&publicPath=assets/images/&outputPath=assets/images/"
+    // use:  "file-loader?name=[hash].[name].[ext]&publicPath=http://hl.webpack-office-case.com/&outputPath=assets/images/"
+    // use:  "file-loader?name=[hash].[name].[ext]&outputPath=assets/images/"
+    use:  "file-loader?name=[hash].[ext]&outputPath=assets/images/"
+}
+```
 
 ### 【url-loader】
 ```
@@ -71,16 +158,73 @@ npm install --save resolve-url-loader --dev
 
 #### 安装
 ```javascript
-// npm install svg-inline-loader --save-dev
-npm install resolve-url-loader --save-dev
+npm install svg-url-loader --save-dev
+```
+
+```javascript
+// 实例.
+{
+    test: /\.svg$/,
+    use: [
+        /* 小于10240byte(10kb)时返回data url否则返回url, 返回data url时不会生成对应的文件. */
+        // {loader: 'svg-url-loader?limit=10240&name=assets/images/[hash].[name].[ext]'}
+        // {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[name].[ext]'}
+        {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[ext]'}
+    ]
+}
+
 ```
 
 ### 【output.publicPath】
 ```
 官方网址：https://doc.webpack-china.org/configuration/output/
 ```
+
+```
+string
+
+对于按需加载(on-demand-load)或加载外部资源(external resources)（如图片、文件等）来说，output.publicPath 是很重要的选项。如果指定了一个错误的值，则在加载这些资源时会收到 404 错误。
+
+此选项指定在浏览器中所引用的「此输出目录对应的公开 URL」。相对 URL(relative URL) 会被相对于 HTML 页面（或 <base> 标签）解析。相对于服务的 URL(Server-relative URL)，相对于协议的 URL(protocol-relative URL) 或绝对 URL(absolute URL) 也可是可能用到的，或者有时必须用到，例如：当将资源托管到 CDN 时。
+
+该选项的值是以 runtime(运行时) 或 loader(载入时) 所创建的每个 URL 为前缀。因此，在多数情况下，此选项的值都会以/结束。
+
+默认值是一个空字符串 ""。
 ```
 
+```javascript
+# 简单规则如下：output.path 中的 URL 以 HTML 页面为基准。
+
+path: path.resolve(__dirname, "public/assets"),
+publicPath: "https://cdn.example.com/assets/"
+```
+
+```javascript
+# 对于这个配置：
+publicPath: "/assets/",
+chunkFilename: "[id].chunk.js"
+
+# 对于一个 chunk 请求，看起来像这样 /assets/4.chunk.js。
+
+# 对于一个输出 HTML 的 loader 可能会像这样输出：
+<link href="/assets/spinner.gif" />
+
+# 或者在加载 CSS 的一个图片时：
+background-image: url(/assets/spinner.gif);
+```
+
+webpack-dev-server 也会默认从 publicPath 为基准，使用它来决定在哪个目录下启用服务，来访问 webpack 输出的文件。
+
+注意，参数中的 [hash] 将会被替换为编译过程(compilation) 的 hash。详细信息请查看指南 - 缓存。
+
+#### 示例：
+```javascript
+publicPath: "https://cdn.example.com/assets/", // CDN（总是 HTTPS 协议）
+publicPath: "//cdn.example.com/assets/", // CDN (协议相同)
+publicPath: "/assets/", // 相对于服务(server-relative)
+publicPath: "assets/", // 相对于 HTML 页面
+publicPath: "../assets/", // 相对于 HTML 页面
+publicPath: "", // 相对于 HTML 页面（目录相同）
 ```
 
 ### 【Public Path】
@@ -139,6 +283,10 @@ import './app';
 ```
 官方网址：https://doc.webpack-china.org/configuration/resolve/#resolve-extensions
 ```
+```
+这些选项能设置模块如何被解析。webpack 提供合理的默认值，但是还是可能会修改一些解析的细节。 关于 resolver 具体如何工作的更多解释说明，请查看模块解析方式。
+```
+
 ```
 
 ```
