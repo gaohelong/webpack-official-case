@@ -1,6 +1,6 @@
 @charset "utf-8";
 // prefix
-$prefix: sso !default;
+$prefix: hl !default;
 
 //【Colors】
 // 设置全局颜色值.
@@ -67,7 +67,7 @@ $login-submit: #d05340                  !default;
 //【3d】
 
 //【Url】
-$img-url:        '../../../images/'         !default;
+$img-url:        '../../../assets/images/'  !default;
 $img-global-url: #{$img-url}#{'global/'}    !default;
 
 //【其他】

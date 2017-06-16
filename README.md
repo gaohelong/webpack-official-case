@@ -1,4 +1,4 @@
-### 【官方网站【
+### 【官方网站】
 ```
 English:  https://webpack.js.org
 Chinease: https://doc.webpack-china.org
@@ -55,7 +55,7 @@ require("url-loader?prefix=img/!./file.png");
 
 ### 【resolve-url-loader】
 ```
-官方网址：https://www.npmjs.com/package/resolve-url-loader
+官方网址: https://www.npmjs.com/package/resolve-url-loader
 github:   https://github.com/bholloway/resolve-url-loader
 ```
 
@@ -64,14 +64,15 @@ github:   https://github.com/bholloway/resolve-url-loader
 npm install --save resolve-url-loader --dev
 ```
 
-### 【svg-inline-loader】
+### 【svg-url-loader】
 ```
-官方网址：https://doc.webpack-china.org/loaders/svg-inline-loader/
+官方网址：https://www.npmjs.com/package/svg-url-loader
 ```
 
 #### 安装
 ```javascript
-npm install svg-inline-loader --save-dev
+// npm install svg-inline-loader --save-dev
+npm install resolve-url-loader --save-dev
 ```
 
 ### 【output.publicPath】

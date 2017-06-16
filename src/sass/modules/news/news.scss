@@ -8,4 +8,19 @@ $img-login-url: #{$img-url}#{'login/'}    !default;
 .#{$prefix}-container {
     color:              $blue;
     font-size:          20px;
+
+    ##{$prefix}-logo {
+        display:                block;
+        width:                  22px;
+        height:                 22px;
+        background-image:       url(#{$img-global-url}boss_blue_22x22.svg);
+    }
+
+    ##{$prefix}-logo-1 {
+        display:                block;
+        width:                  270px;
+        height:                 340px;
+        background-image:       url(#{$img-global-url}boss_22x22.png);
+    }
+
 }

@@ -1,6 +1,6 @@
 /* sass */
-require('../../sass/main.scss');
-require('../../sass/modules/news/news.scss');
+require('../../sass/main');
+require('../../sass/modules/news/news');
 
 import _ from 'lodash';
 
@@ -12,14 +12,14 @@ import $ from 'jquery';
 // import $ from 'jquery';
 
 function component () {
-    var element = document.createElement('div');
-
     /* 需要引入 lodash，下一行才能正常工作 */
-    element.innerHTML = _.join(['Hello','news', $(window).height()], ' ');
+    var ele = '<div class="hl-container">\
+                  <i id="hl-logo"></i>\
+                  <i id="hl-logo-1"></i>\
+                  <h1 class="title">' + _.join(['Hello','news', $(window).height()], ' ') + '</h1>\
+               </div>';
 
-    $('body').css({'background-color': '#fff', 'color': 'red'});
-
-    return element;
+    return $(ele);
 }
 
-document.body.appendChild(component());
+$('body').append(component());

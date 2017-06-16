@@ -5,7 +5,7 @@ var path = require('path');
 // 将css提取成单独文件.
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 const extractSass = new ExtractTextPlugin({
-    filename: "[name].[contenthash].css",
+    filename: "assets/css/[name].[contenthash].css", // 输出到assets/css/目录下.
     // disable: process.env.NODE_ENV === "development" // true: 禁用，这是css在当前页面的<style></style>中. 如果为false: 启用，则单独生成css文件. 默认为false.
 });
 
@@ -16,11 +16,15 @@ module.exports = {
         news: ['./src/modules/news/news.js'],
     },
 
-    /* output */
+    /* 输出 */
     output: {
         // filename: 'bundle.js',
-        filename: '[name].[chunkhash].js',
-        path: path.resolve(__dirname, '../dist')
+        filename: 'assets/js/[name].[chunkhash].js', // 输出到assets/js/目录下
+        path: path.resolve(__dirname, '../dist'), // 输出路径
+
+        /* 对于按需加载(on-demand-load)或加载外部资源(external resources)（如图片、文件等）来说，output.publicPath 是很重要的选项 */
+        /* 如果指定了一个错误的值，则在加载这些资源时会收到 404 错误。 */
+        publicPath: 'http://hl.webpack-office-case.com/' // 一般都设置一个url否则去掉这项.
     },
 
     /* webpack-dev-server */
@@ -28,6 +32,12 @@ module.exports = {
         contentBase: path.join(__dirname, "../dist"),
         compress: true,
         port: 8080
+    },
+
+    /* 设置模块如何解析 */
+    resolve:  {
+        /* 自动解析确定的扩展。默认值为：extensions: [".js", ".json"] */
+        extensions: [".js", ".json", ".scss"] // 在js中不用写前面所列出的文件后缀, 例如：1.scss就可以去掉.scss了.
     },
 
     /* 外部扩展(防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(external dependencies)。) */
@@ -43,13 +53,34 @@ module.exports = {
                 test: /\.scss$/,
                 use: extractSass.extract({
                     use: [
-                        {loader: "css-loader"}, 
+                        {loader: "css-loader?sourceMap"},
+                        // {loader: "resolve-url-loader"}, // 放在此处是转换css中的路径为绝对路径.
                         // {loader: "sass-loader"}
-                        {loader: "sass-loader?includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
+                        {loader: "sass-loader?sourceMap&includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
                     ],
                     // 在开发环境使用 style-loader
                     fallback: "style-loader"
                 })
+            },
+
+            // svg.
+            {
+                test: /\.svg$/,
+                use: [
+                    /* 小于10240byte(10kb)时返回data url否则返回url, 返回data url时不会生成对应的文件. */
+                    // {loader: 'svg-url-loader?limit=10240&name=assets/images/[hash].[name].[ext]'}
+                    {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[name].[ext]'}
+                ]
+            },
+
+            // file-loader(将项目目录下assets/images/的目录结构及文件拷贝到输出目录下)
+            {
+                test: /\.(jpe?g|png|gif)(\?v=\d+\.\d+\.\d+)?$/,
+
+                /* 不设置publicPath时默认使用output中的publicPath */
+                // use:  "file-loader?name=[hash].[name].[ext]&publicPath=assets/images/&outputPath=assets/images/"
+                // use:  "file-loader?name=[hash].[name].[ext]&publicPath=http://hl.webpack-office-case.com/&outputPath=assets/images/"
+                use:  "file-loader?name=[hash].[name].[ext]&outputPath=assets/images/"
             },
         ]
     },
@@ -58,7 +89,7 @@ module.exports = {
     plugins: [
         // source map(方便排查、定位javascript问题)
         new webpack.SourceMapDevToolPlugin({
-            filename: '[name].js.map',
+            filename: 'map/[name].js.map', // 输出到map目录下
             exclude: ['vendor.js'] // 排除vendor.js
         }),
 
@@ -79,10 +110,14 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             title: 'news',
-            filename: 'news.html',
+            filename: 'page/news.html', // 输出到page目录下
             template: './src/views/news/index.html',
             // chunks: ['news'], // 只引入news
-            excludeChunks: ['main']
+            excludeChunks: ['main'],
+
+            /* inject: true | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中 */
+            /* 如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。*/
+            inject: true
         })
     ]
 };
