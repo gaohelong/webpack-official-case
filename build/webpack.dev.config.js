@@ -5,8 +5,21 @@ var path = require('path');
 
 /* 将css提取成单独文件 */
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const extractGlobalSass = new ExtractTextPlugin({
+    // filename: "assets/css/global.[contenthash].css", // 输出到assets/css/目录下.
+    filename: "assets/css/[contenthash].css", // 输出到assets/css/目录下.
+    // disable: process.env.NODE_ENV === "development" // true: 禁用，这是css在当前页面的<style></style>中. 如果为false: 启用，则单独生成css文件. 默认为false.
+});
+
 const extractSass = new ExtractTextPlugin({
-    filename: "assets/css/[name].[contenthash].css", // 输出到assets/css/目录下.
+    // filename: "assets/css/[name].[contenthash].css", // 输出到assets/css/目录下.
+    filename: "assets/css/[contenthash].css", // 输出到assets/css/目录下.
+    // disable: process.env.NODE_ENV === "development" // true: 禁用，这是css在当前页面的<style></style>中. 如果为false: 启用，则单独生成css文件. 默认为false.
+});
+
+const extractCss = new ExtractTextPlugin({
+    // filename: "assets/css/[contenthash].css", // 输出到assets/css/目录下.
+    filename: "assets/css/[contenthash].css", // 输出到assets/css/目录下.
     // disable: process.env.NODE_ENV === "development" // true: 禁用，这是css在当前页面的<style></style>中. 如果为false: 启用，则单独生成css文件. 默认为false.
 });
 
@@ -20,6 +33,7 @@ module.exports = function(env) {
         entry: {
             main: ['./src/main.js'],
             news: ['./src/modules/news/news.js'],
+            bootstrap: ['bootstrap-loader/extractStyles']
         },
 
         /* 输出 */
@@ -43,7 +57,7 @@ module.exports = function(env) {
         /* 设置模块如何解析 */
         resolve:  {
             /* 自动解析确定的扩展。默认值为：extensions: [".js", ".json"] */
-            extensions: [".js", ".json", ".scss"] // 在js中不用写前面所列出的文件后缀, 例如：1.scss就可以去掉.scss了.
+            extensions: [".js", ".json", ".scss", ".css"] // 在js中不用写前面所列出的文件后缀, 例如：1.scss就可以去掉.scss了.
         },
 
         /* 外部扩展(防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(external dependencies)。) */
@@ -54,12 +68,55 @@ module.exports = function(env) {
         /* loader */
         module: {
             rules: [
+                // css.
+                {
+                    test: /\.css$/,
+                    use: extractCss.extract({
+                        use: [
+                            {
+                                loader: 'css-loader?sourceMap',
+                                options:{
+                                    minimize: true // css压缩
+                                }
+                            },
+                            {loader: 'postcss-loader'},
+                        ],
+                        // 在开发环境使用 style-loader
+                        fallback: "style-loader"
+                    })
+                },
+
+                // main sass.
+                {
+                    test: /main\.scss$/,
+                    use: extractGlobalSass.extract({
+                        use: [
+                            {
+                                loader: "css-loader?sourceMap",
+                                // options:{
+                                //     minimize: true // css压缩
+                                // }
+                            },
+                            // {loader: "resolve-url-loader"}, // 放在此处是转换css中的路径为绝对路径.
+                            // {loader: "sass-loader"}
+                            {loader: "sass-loader?sourceMap&includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
+                        ],
+                        // 在开发环境使用 style-loader
+                        fallback: "style-loader"
+                    })
+                },
+
                 // sass.
                 {
-                    test: /\.scss$/,
+                    test: /[^main]\.scss$/,
                     use: extractSass.extract({
                         use: [
-                            {loader: "css-loader?sourceMap"},
+                            {
+                                loader: "css-loader?sourceMap",
+                                // options:{
+                                //     minimize: true // css压缩
+                                // }
+                            },
                             // {loader: "resolve-url-loader"}, // 放在此处是转换css中的路径为绝对路径.
                             // {loader: "sass-loader"}
                             {loader: "sass-loader?sourceMap&includePaths[]=" + path.resolve(__dirname, "../node_modules/compass-mixins/lib")}
@@ -74,6 +131,7 @@ module.exports = function(env) {
                     test: /\.svg$/,
                     use: [
                         /* 小于10240byte(10kb)时返回data url否则返回url, 返回data url时不会生成对应的文件. */
+                        // {loader: 'svg-url-loader?limit=10240&name=assets/images/[hash].[name].[ext]'}
                         // {loader: 'svg-url-loader?limit=10240&name=assets/images/[hash].[name].[ext]'}
                         // {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[name].[ext]'}
                         {loader: 'svg-url-loader?limit=1&name=assets/images/[hash].[ext]'}
@@ -90,6 +148,24 @@ module.exports = function(env) {
                     // use:  "file-loader?name=[hash].[name].[ext]&outputPath=assets/images/"
                     use:  "file-loader?name=[hash].[ext]&outputPath=assets/images/"
                 },
+
+                // woff、fft、eot、svg
+                {
+                    test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+                    use: 'url-loader?limit=10000&mimetype=application/font-woff&outputPath=assets/font/'
+                },
+                {
+                    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                    use: 'url-loader?limit=10000&mimetype=application/octet-stream&outputPath=assets/font/'
+                },
+                {
+                    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                    use: 'file-loader?outputPath=assets/font/'
+                },
+                // {
+                //     test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                //     use: 'url-loader?limit=10000&mimetype=image/svg+xml' // 将小于10kb的svg转换成data url
+                // }
             ]
         },
 
@@ -102,7 +178,9 @@ module.exports = function(env) {
             }),
 
             // 提取成单独的css文件.
+            extractGlobalSass,
             extractSass,
+            extractCss,
 
             // 生成html.
             new HtmlWebpackPlugin({

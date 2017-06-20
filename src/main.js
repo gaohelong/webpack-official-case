@@ -1,5 +1,6 @@
 /* sass */
-require('./sass/main.scss');
+require('./sass/main');
+require('./sass/modules/main/index');
 
 import _ from 'lodash';
 
