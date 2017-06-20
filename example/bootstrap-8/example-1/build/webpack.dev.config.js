@@ -75,9 +75,9 @@ module.exports = function(env) {
                         use: [
                             {
                                 loader: 'css-loader?sourceMap',
-                                // options:{
-                                //     minimize: true // css压缩
-                                // }
+                                options:{
+                                    minimize: true // css压缩
+                                }
                             },
                             {loader: 'postcss-loader'},
                         ],
