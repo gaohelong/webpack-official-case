@@ -33,6 +33,7 @@ module.exports = function(env) {
         entry: {
             main: ['./src/main.js'],
             news: ['./src/modules/news/news.js'],
+            date: ['./src/modules/date/date.js'],
             bootstrap: ['bootstrap-loader/extractStyles']
         },
 
@@ -192,19 +193,31 @@ module.exports = function(env) {
 
                 // chunks: ['main'], // 只引入main
                 /* 跟 chunks 是相反的，排除掉某些 js 文件 */
-                excludeChunks: ['news']
+                excludeChunks: ['news', 'date']
             }),
             new HtmlWebpackPlugin({
                 title: 'news',
                 filename: 'page/news.html', // 输出到page目录下
                 template: './src/views/news/index.html',
                 // chunks: ['news'], // 只引入news
-                excludeChunks: ['main'],
+                excludeChunks: ['main', 'date'],
 
                 /* inject: true | 'head' | 'body' | false  ,注入所有的资源到特定的 template 或者 templateContent 中 */
                 /* 如果设置为 true 或者 body，所有的 javascript 资源将被放置到 body 元素的底部，'head' 将放置到 head 元素中。*/
                 inject: true
+            }),
+            new HtmlWebpackPlugin({
+                title: 'date',
+                filename: 'page/date.html', // 输出到page目录下
+                template: './src/views/date/index.html',
+
+                /* chunks 选项的作用主要是针对多入口(entry)文件。当你有多个入口文件的时候，对应就会生成多个编译后的 js 文件。那么 chunks 选项就可以决定是否都使用这些生成的 js 文件。*/
+                /* chunks 默认会在生成的 html 文件中引用所有的 js 文件，当然你也可以指定引入哪些特定的文件。*/
+
+                // chunks: ['main'], // 只引入main
+                /* 跟 chunks 是相反的，排除掉某些 js 文件 */
+                excludeChunks: ['news', 'main']
             })
-        ]
+       ]
     }
 };
