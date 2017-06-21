@@ -15,9 +15,9 @@ Chinease: http://nodejs.cn/
 https://www.npmjs.com/
 ```
 
-### 【avalon2】
+### 【第三方日期插件】
 
-#### 
+#### daterangepicker
 ```
 
 ```
