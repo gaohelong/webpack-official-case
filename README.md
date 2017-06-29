@@ -4,7 +4,7 @@ English:  https://webpack.js.org
 Chinease: https://doc.webpack-china.org
 ```
 
-### 【Bable】
+### 【Babel】
 ```
 English: http://babeljs.io/
 ```
