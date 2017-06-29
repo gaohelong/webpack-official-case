@@ -15,7 +15,7 @@ English:  https://nodejs.org
 Chinease: http://nodejs.cn/
 ```
 
-### 【npm网站】
+### 【npm】
 ```
 https://www.npmjs.com/
 ```
